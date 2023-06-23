@@ -26,6 +26,7 @@ With Gradle:
 
 ```groovy
 repositories {
+    mavenCentral()
     maven {
         url = uri("https://maven.pkg.github.com/artynova/prompter")
         credentials {

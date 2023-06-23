@@ -70,6 +70,6 @@ jobs:
       - name: Publish artifact
         uses: gradle/gradle-build-action@v2.4.2
         with:
-          arguments: assemble publish
+          arguments: publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
