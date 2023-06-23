@@ -24,15 +24,19 @@ This is also my student project made for a course at NaUKMA.
 
 With Gradle:
 
-```gradle
+```groovy
 repositories {
     maven {
-        url = "https://maven.pkg.github.com/artynova/prompter"
+        url = uri("https://maven.pkg.github.com/artynova/prompter")
+        credentials {
+            username = 'your username'
+            password = 'your token with package read permissions'
+        }
     }
 }
 
 dependencies {
-    implementation 'artynova:prompter:1.0-SNAPSHOT'
+    implementation group: 'io.github.artynova', name: 'prompter', version: '1.0.0'
 }
 
 ```
