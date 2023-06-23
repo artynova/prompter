@@ -56,6 +56,8 @@ final class TestPrompts {
 
     @Test
     void testBoolean() {
+        System.out.println("a" +
+        "b"); // this is a blatant checkstyle violation to showcase quality control; oh, and this comment is a violation too
         testPrompt(Boolean.class, """
             a
             banana
@@ -70,6 +72,16 @@ final class TestPrompts {
             a
             banana
             false
+            """, false);
+        testPrompt(Boolean.class, """
+            a
+            banana
+            1
+            """, true);
+        testPrompt(Boolean.class, """
+            a
+            banana
+            0
             """, false);
     }
 

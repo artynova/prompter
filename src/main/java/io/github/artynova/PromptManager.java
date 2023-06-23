@@ -120,8 +120,12 @@ public final class PromptManager {
         registerPrompt(Boolean.class,
             new OneLinePrompt<>(Boolean.class, bool -> {
                 if (!"false".equalsIgnoreCase(bool)
-                    && !"true".equalsIgnoreCase(bool)) {
+                    && !"true".equalsIgnoreCase(bool)
+                    && !"0".equals(bool) && !"1".equals(bool)) {
                     throw new PromptAnswerException("Illegal boolean: " + bool);
+                }
+                if (Character.isDigit(bool.charAt(0))) {
+                    return bool.charAt(0) == '1';
                 }
                 return Boolean.parseBoolean(bool);
             }));
