@@ -1,0 +1,101 @@
+import se.solrike.sonarlint.Sonarlint
+
+plugins {
+    id 'java-library'
+    id 'se.solrike.sonarlint' version '1.0.0-beta.15'
+    id 'checkstyle'
+    id 'maven-publish'
+}
+
+group 'io.github.artynova'
+version '1.0.0'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation group: 'commons-beanutils', name: 'commons-beanutils', version: '1.9.4'
+    implementation group: 'com.squareup', name: 'javapoet', version: '1.13.0'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+
+    sonarlintPlugins 'org.sonarsource.java:sonar-java-plugin:7.17.0.31219'
+}
+
+tasks.withType(Sonarlint) {
+    reports {
+        xml.enabled = true
+    }
+    ignoreFailures = true // just report, fail with github action
+
+    excludeRules = ['java:S1168'] // returning skipped arrays as nulls
+    // rather than empty arrays is a design choice, because in context of
+    // taking user input a null array and an empty array are not equivalent
+}
+
+tasks.withType(Checkstyle).configureEach {
+    reports.xml.required = true
+    reports.html.required = false
+    ignoreFailures = true // just report, fail with github action
+}
+
+checkstyleMain {
+    configFile = file("$rootDir\\config\\checkstyle\\checkstyleMain.xml")
+}
+
+checkstyleTest {
+    configFile = file("$rootDir\\config\\checkstyle\\checkstyleTest.xml")
+}
+
+test {
+    useJUnitPlatform()
+    reports.html.required = false
+    reports.junitXml.required = true
+    ignoreFailures = true // just report, fail with github action
+}
+
+publishing {
+     repositories {
+        maven {
+            name = "GitHubPackages"
+            url = "https://maven.pkg.github.com/artynova/playground"
+            credentials {
+                username = System.getenv("GITHUB_ACTOR")
+                password = System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
+
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+
+            groupId = project.group
+            artifactId = 'prompter'
+            version = project.version
+
+            pom {
+                name = 'Prompter'
+                description = 'A library for accepting user input'
+                url = 'https://github.com/artynova/playground'
+
+                licenses {
+                    license {
+                        name = 'MIT License'
+                        url = 'https://opensource.org/licenses/MIT'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id = 'artynova'
+                        name = 'Artem Novak'
+                        email = 'artemnovak06@gmail.com'
+                    }
+                }
+            }
+        }
+    }
+}
